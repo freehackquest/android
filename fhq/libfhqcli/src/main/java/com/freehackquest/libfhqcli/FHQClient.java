@@ -14,6 +14,9 @@ import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class FHQClient extends Service {
     private static final String TAG = FHQClient.class.getSimpleName();
 
@@ -84,6 +87,9 @@ public class FHQClient extends Service {
 
 
     public boolean isConnected() {
+        if (mWebSocket == null) {
+            return false;
+        }
         return mWebSocket.isOpen();
     }
 
@@ -114,6 +120,7 @@ public class FHQClient extends Service {
 
     public void disconnect() {
         mWebSocket.disconnect();
+        mWebSocket = null;
     }
 
     public void onConnected() {
@@ -128,5 +135,26 @@ public class FHQClient extends Service {
         if (mListener != null) {
             mListener.onDisconnected();
         }
+    }
+
+    public void login(String email, String password) {
+        if (!isConnected()) {
+            return;
+        }
+        String request = "{}";
+        try {
+            JSONObject json = new JSONObject();
+            json.put("cmd", "login");
+            json.put("m", "m1");
+            json.put("email", email);
+            json.put("password", password);
+            request = json.toString();
+        } catch(JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "JSONException " + e.getMessage());
+            return;
+        }
+        Log.i(TAG, "Send Message " + request);
+        mWebSocket.sendText(request);
     }
 }
