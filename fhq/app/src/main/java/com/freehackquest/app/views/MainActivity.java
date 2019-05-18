@@ -1,7 +1,9 @@
-package com.freehackquest.app;
+package com.freehackquest.app.views;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.freehackquest.app.R;
 
 public class MainActivity extends AppCompatActivity {
 
